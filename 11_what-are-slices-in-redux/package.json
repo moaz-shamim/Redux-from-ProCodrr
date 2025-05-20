@@ -1,0 +1,23 @@
+{
+  "name": "00_redux-intro-and-reducer-pattern",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.7.0",
+    "immer": "^10.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.17.0",
+    "redux": "^4.2.1",
+    "use-immer": "^0.11.0"
+  },
+  "devDependencies": {
+    "process": "^0.11.10"
+  }
+}
