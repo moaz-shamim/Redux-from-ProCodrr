@@ -1,0 +1,8 @@
+export const func = (store) => (next) => (action) => {
+    if (typeof action === 'function') {
+      console.log("🔥 func middleware triggered");
+      return action(store.dispatch, store.getState);
+    }
+    return next(action);
+  };
+  
