@@ -35,7 +35,11 @@ export const fetchData = (payload) => ({ type: 'api/makeCall', payload })
 export const func = ({dispatch , getState}) => (next) => (action) => {
   if (typeof action === 'function') {
     console.log("🔥 func middleware triggered");
-    return action(dispatch, getState);
+    
+    // return action(dispatch, getState);
+    
+    // Here We have to pass one argument for now because we don't need get a state in the dispatched function 
+    return action(dispatch);
   }
   return next(action);
 };
