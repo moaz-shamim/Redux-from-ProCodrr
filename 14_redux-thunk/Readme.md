@@ -119,6 +119,109 @@ extraReducers: (builder) => {
 
 ---
 
+## 🧱 1. **Why `extraReducers` + `builder.addCase`?**
+
+When you use `createAsyncThunk`, Redux Toolkit automatically creates **three action types** for you:
+
+* `fetchCartItemsData.pending`
+* `fetchCartItemsData.fulfilled`
+* `fetchCartItemsData.rejected`
+
+These are **not part of your normal slice reducers**, so to handle them, you must use `extraReducers`.
+
+### 🔧 `extraReducers` lets you handle *external actions* — like those created by `createAsyncThunk`.
+
+```js
+extraReducers: (builder) => {
+	builder
+		.addCase(fetchCartItemsData.pending, (state) => {
+			state.loading = true;
+		})
+		.addCase(fetchCartItemsData.fulfilled, (state, action) => {
+			state.loading = false;
+			state.list = action.payload.products;
+		})
+		.addCase(fetchCartItemsData.rejected, (state, action) => {
+			state.loading = false;
+			state.error = action.payload || "Something went wrong.";
+		});
+}
+```
+
+So `builder.addCase` is just a nice, chainable way to respond to those lifecycle actions.
+
+---
+
+## 🚫 2. Can You Fetch Data Without `extraReducers`?
+
+Yes — you can **still use `dispatch()` with a normal async thunk** (the old-school way), like this:
+
+```js
+export const fetchCartItemsData = () => async (dispatch) => {
+	dispatch(fetchCartItems()); // manual action
+	try {
+		const res = await fetch("https://fakestoreapi.com/carts/5");
+		const data = await res.json();
+		dispatch(loadCartItems(data)); // manual action
+	} catch (error) {
+		dispatch(fetchCartItemsError(error.message));
+	}
+};
+```
+
+Then in your `reducers`, you manually create those reducers:
+
+```js
+reducers: {
+	fetchCartItems(state) {
+		state.loading = true;
+	},
+	loadCartItems(state, action) {
+		state.loading = false;
+		state.list = action.payload.products;
+	},
+	fetchCartItemsError(state, action) {
+		state.loading = false;
+		state.error = action.payload || "Something went wrong.";
+	},
+}
+```
+
+✅ **This works**, but it requires more boilerplate:
+
+* You have to define all three action creators
+* You have to handle dispatch manually
+* You lose out on auto-generated lifecycle handling
+
+---
+
+## ✅ 3. Why Use `createAsyncThunk` + `extraReducers`?
+
+It’s **cleaner**, more **standard**, and follows Redux Toolkit best practices:
+
+| Traditional Thunk Way     | `createAsyncThunk` Way           |
+| ------------------------- | -------------------------------- |
+| Manual action creators    | Auto-generated lifecycle actions |
+| More boilerplate          | Cleaner, fewer lines of code     |
+| Custom dispatching needed | Just call `dispatch(thunkFn())`  |
+
+---
+
+## 🧠 Final Summary
+
+| Concept                 | Purpose                                                                  |
+| ----------------------- | ------------------------------------------------------------------------ |
+| `createAsyncThunk`      | Creates async action + lifecycle actions                                 |
+| `extraReducers`         | Lets your slice respond to external actions                              |
+| `builder.addCase`       | Lets you handle each action (`pending`, `fulfilled`, `rejected`) cleanly |
+| Can you do it manually? | Yes, but it’s more work and less clean                                   |
+
+---
+
+Would you like a small visual of this flow or side-by-side comparison?
+
+---
+
 ## 📊 Final Refactored Slice with `createAsyncThunk`
 
 ```js
